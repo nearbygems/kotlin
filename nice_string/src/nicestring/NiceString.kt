@@ -1,21 +1,12 @@
 package nicestring
 
-fun String.isNice(): Boolean = (this.isBu() + this.containsThreeVowels() + this.hasDouble()) > 1
+fun String.isNice(): Boolean {
 
-fun String.isBu(): Int = when {
-  contains("bu") -> 0
-  contains("ba") -> 0
-  contains("be") -> 0
-  else -> 1
-}
+  val noBadSubString = setOf("ba", "be", "bu").none { this.contains(it) }
 
-fun String.containsThreeVowels() = if (this.countVowels() > 2) 1 else 0
+  val hasThreeVowels = count { it in "aeiou" } >= 3
 
-fun String.countVowels(): Int = this.count() { it in arrayOf('a', 'e', 'i', 'o', 'u') }
+  val hasDouble = zipWithNext().any { it.first == it.second }
 
-fun String.hasDouble(): Int {
-  for (i in 1 until this.length) {
-    if (this[i] == this[i - 1]) return 1
-  }
-  return 0;
+  return listOf(noBadSubString, hasThreeVowels, hasDouble).count { it } >= 2
 }
