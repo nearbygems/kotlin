@@ -3,23 +3,10 @@ package mastermind
 data class Evaluation(val rightPosition: Int, val wrongPosition: Int)
 
 fun evaluateGuess(secret: String, guess: String): Evaluation {
-  val list = secret.toMutableList();
-  var rightPosition = 0;
-  var wrongPosition = 0;
 
-  secret.indices.forEach {
-    if (secret[it] == guess[it]) {
-      rightPosition++
-      list.remove(secret[it])
-    }
-  }
+  val rightPosition = secret.zip(guess).count { it.first == it.second }
 
-  secret.indices.forEach {
-    if (secret[it] != guess[it] && guess[it] in list) {
-      wrongPosition++
-      list.remove(guess[it])
-    }
-  }
+  val commonLetters = "ABCDEF".sumBy { ch -> secret.count { it == ch }.coerceAtMost(guess.count { it == ch }) }
 
-  return Evaluation(rightPosition, wrongPosition)
+  return Evaluation(rightPosition, commonLetters - rightPosition)
 }
